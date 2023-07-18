@@ -16,7 +16,6 @@ import uuid
 import requests
 
 
-import upvest.auth as up_auth
 import upvest.http as up_http
     
 
@@ -33,7 +32,7 @@ if __name__ == "__main__":
     client_secret = sys.argv[5]
     
     api = up_http.UpvestAPI("https://sandbox.upvest.co", pem_file, pem_password, preshared_key_id, client_id, client_secret, scopes=["users:admin"])
-    resp = api.get("/users")
+    resp = api.get("/users", params={"limit": 2})
     
     print(resp.json())
 
