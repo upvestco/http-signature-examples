@@ -3,9 +3,7 @@
 # To use this script you'll need to:
 #
 #   pip3 install cryptography
-#   pip3 install http_sfv
 #   pip3 install requests
-#   pip3 install requests_http_signature
 
 
 import datetime
