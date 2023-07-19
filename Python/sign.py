@@ -6,13 +6,7 @@
 #   pip3 install requests
 
 
-import datetime
-import json
 import sys
-import uuid
-
-import requests
-
 
 import upvest.http as up_http
     
