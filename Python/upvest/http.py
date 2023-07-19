@@ -26,10 +26,19 @@ class UpvestAPI():
     """UpvestAPI provides HTTP primitives (GET, POST, PUT, PATCH,
     HEAD, DELETE) enhanced with the HTTP Message Signing required to
     authenticate with Upvest Investment API."""
-    
+
+    # we give a 5 second buffer to the token expiry time, so we
+    # request a new token early and don't send requests with a token
+    # that might expire.
     _token_expiry_buffer = 5
+
+    # We always use HTTPS, so there's no need to have the consumer
+    # pass this in.
+    _protocol = "https"
     
     def __init__(self, host, pem_file_path, pem_password, preshared_key_id, client_id, client_secret, scopes=[]):
+        """Creates a new UpvestAPI object based on b"""
+
         self._host = host
         self._pk = self._read_private_key_from_pem(pem_file_path, pem_password)
         self._preshared_key_id = preshared_key_id
@@ -46,20 +55,32 @@ class UpvestAPI():
             decrypted_key = load_pem_private_key(key, pem_password)
         return decrypted_key
 
+    def _make_url(self, path):
+        return self._protocol + "://" + self._host + path
+
+
     def _add_digest(self, request):
         if request.body is not None:
             digest = hashlib.sha512(request.body.encode("utf-8")).digest()
             request.headers["Content-Digest"] = "sha-512=:%s:" % \
                 base64.b64encode(digest).decode()
 
-    def _sign(self, request, path, created, content_keys=[]):
-        sig_key_names = ' '.join(['"' + key + '"' for key in content_keys])
-        unix_time = int(created.timestamp())
+    def _make_sig_key_names(self, content_keys):
+        return ' '.join(['"' + key + '"' for key in content_keys])
+
+    def _make_sig_params(self, created, content_keys):
+        sig_key_names = self._make_sig_key_names(content_keys)                            
+        created_timestamp = int(created.timestamp())
+        expiry_timestamp = created_timestamp + 100
         nonce = secrets.token_hex(16)
-        sig_params = '(%s);keyid="%s";created=%s;expires=%s;nonce="%s"' % \
-            (sig_key_names, self._preshared_key_id, unix_time,
-             unix_time + 100, nonce)
-        sig_input = 'sig1=' + sig_params
+        return f'({sig_key_names});' \
+            f'keyid="{self._preshared_key_id}";' \
+            f'created={created_timestamp};' \
+            f'expires={expiry_timestamp};' \
+            f'nonce="{nonce}"'
+
+    def _make_signature_payload(self, request, created, content_keys):
+        sig_params = self._make_sig_params(created, content_keys)
         sig_value = ""
         values = {key.lower(): value for key, value in request.headers.items()}
         values["@method"] = request.method
@@ -71,7 +92,12 @@ class UpvestAPI():
             value = values[key]
             sig_value += f'{key}: {value}\n'
         sig_value += f'@signature-params: {sig_params}'
+        sig_input = 'sig1=' + sig_params
+        return sig_input, sig_value
 
+            
+    def _sign(self, request, path, created, content_keys=[]):
+        sig_input, sig_value = self._make_signature_payload(request, created, content_keys)
         signature = base64.b64encode(self._pk.sign(sig_value.encode('utf-8'), ECDSA(hashes.SHA512())))
         request.headers["Signature"] = 'sig1=:%s:' % signature.decode()
         request.headers["Signature-Input"] = sig_input
@@ -84,7 +110,7 @@ class UpvestAPI():
             return 
 
         path = "/auth/token"
-        url = self._host + path
+        url = self._make_url(path)
         created = datetime.datetime.now()
         
         req = requests.Request("POST", url,
@@ -127,7 +153,7 @@ class UpvestAPI():
             content_keys.append("@query")
 
         created = datetime.datetime.now()
-        url = self._host + path
+        url = self._make_url(path)
         req = requests.Request("GET", url,
                                params=params,
                                headers={
@@ -145,5 +171,5 @@ class UpvestAPI():
 
         return self._session.send(prepped)
 
-
+    # TODO: add post, patch, put, delete, head
         
