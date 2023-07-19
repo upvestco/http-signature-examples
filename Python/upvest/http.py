@@ -90,8 +90,8 @@ class UpvestAPI():
             values["@query"] = "?" + parts.query
         for key in content_keys:
             value = values[key]
-            sig_value += f'{key}: {value}\n'
-        sig_value += f'@signature-params: {sig_params}'
+            sig_value += f'"{key}": {value}\n'
+        sig_value += f'"@signature-params": {sig_params}'
         sig_input = 'sig1=' + sig_params
         return sig_input, sig_value
 
