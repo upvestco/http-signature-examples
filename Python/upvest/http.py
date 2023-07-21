@@ -26,9 +26,11 @@ class AuthorisationFailedError(Exception):
 
 
 class UpvestAPI():
-    """UpvestAPI provides HTTP primitives (GET, POST, PUT, PATCH,
-    HEAD, DELETE) enhanced with the HTTP Message Signing required to
-    authenticate with Upvest Investment API."""
+    """
+    UpvestAPI provides HTTP primitives (GET, POST, PUT, PATCH,
+    DELETE) enhanced with the HTTP Message Signing required to
+    authenticate with Upvest Investment API.
+    """
 
     # we give a 5 second buffer to the token expiry time, so we
     # request a new token early and don't send requests with a token
