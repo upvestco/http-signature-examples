@@ -210,20 +210,10 @@ class UpvestAPI():
         #       749d0a18-a45f-4acd-bb2c-e93112da0660
         return str(uuid.uuid4())
     
-        
-    def get(self, path, params=None):
-        """Get performs an HTTP GET request against the Upvest Investment API.
 
-        path
-                The path to the endpoint you wish to GET. This value should
-                always begin with a leading '/'. e.g. /fees/collections
-
-        params
-                (optional) A dictionary of key/value pairs to be encoded in the
-                query section of the URL.
-        """
+    def _request_without_payload(self, method, path, params=None):
         self._auth()
-        # Note: GET requests don't need Content-Length or Content-Digest in
+        # Note: These requests don't need Content-Length or Content-Digest in
         #       the content_keys.  These elements are both derived from the
         #       request body and thus 
         content_keys = ['accept', 'content-type',
@@ -236,7 +226,7 @@ class UpvestAPI():
         created = datetime.datetime.now()
         url = self._make_url(path)
         req = requests.Request(
-            "GET",
+            method,
             url,
             params=params,
             headers={
@@ -253,17 +243,7 @@ class UpvestAPI():
         req = self._sign(prepped, path, created, content_keys=content_keys)
         return self._session.send(prepped)
 
-    def post(self, path, json=None):
-        """POST performs an HTTP POST request against the Upvest Investment API.
-
-        path
-                The path to the endpoint you wish to GET. This value should
-                always begin with a leading '/'. e.g. /fees/collections
-
-        json 
-                (optional) A JSON serializable Python object to send in the body
-                of the Request.
-        """
+    def _request_with_payload(self, method, path, json=None):
         self._auth()
         content_keys = ['accept',  'content-type',
                         'upvest-client-id', '@method', '@path',
@@ -273,7 +253,7 @@ class UpvestAPI():
         if json:
             content_keys.append('content-length')
             content_keys.append('content-digest')
-            
+
         created = datetime.datetime.now()
         url = self._make_url(path)
 
@@ -284,7 +264,7 @@ class UpvestAPI():
         idempotency_key = self._gen_idempotency_key()
         
         req = requests.Request(
-            "POST",
+            method,
             url,
             headers={
                 'Date': formatdate(timeval=created.timestamp(),
@@ -304,4 +284,73 @@ class UpvestAPI():
             req = self._add_digest(prepped)
         req = self._sign(req, path, created, content_keys=content_keys)
         return self._session.send(req)
+        
+
+    def get(self, path, params=None):
+        """Get performs an HTTP GET request against the Upvest Investment API.
+
+        path
+                The path to the endpoint you wish to GET. This value should
+                always begin with a leading '/'. e.g. /fees/collections
+
+        params
+                (optional) A dictionary of key/value pairs to be encoded in the
+                query section of the URL.
+        """
+        return self._request_without_payload("GET", path, params=params)
+
+    def post(self, path, json=None):
+        """POST performs an HTTP POST request against the Upvest Investment API.
+
+        path
+                The path to the endpoint you wish to GET. This value should
+                always begin with a leading '/'. e.g. /fees/collections
+
+        json 
+                (optional) A JSON serializable Python object to send in the body
+                of the Request.
+        """
+        return self._request_with_payload("POST", path, json=json)
+
+    def patch(self, path, json=None):
+        """PATCH performs an HTTP PATCH request against the Upvest Investment API.
+
+        path
+                The path to the endpoint you wish to GET. This value should
+                always begin with a leading '/'. e.g. /fees/collections
+
+        json 
+                (optional) A JSON serializable Python object to send in the body
+                of the Request.
+        """
+        return self._request_with_payload("PATCH", path, json=json)
+
+    def put(self, path, json=None):
+        """PUT performs an HTTP PUT request against the Upvest Investment API.
+
+        path
+                The path to the endpoint you wish to GET. This value should
+                always begin with a leading '/'. e.g. /fees/collections
+
+        json 
+                (optional) A JSON serializable Python object to send in the body
+                of the Request.
+        """
+        return self._request_with_payload("PUT", path, json=json)
+
+    def delete(self, path, params=None):
+        """
+        Delete performs an HTTP DELETE request against the Upvest Investment
+        API.
+
+        path
+                The path to the endpoint you wish to DELETE. This value should
+                always begin with a leading '/'. e.g. /fees/collections
+
+        params
+                (optional) A dictionary of key/value pairs to be encoded in the
+                query section of the URL.
+        """
+        return self._request_without_payload("DELETE", path, params=params)
+        
         
