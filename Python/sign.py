@@ -14,7 +14,9 @@
 #   pip3 install requests
 
 
+import http.client as http_client
 import json
+import logging
 import os
 import sys
 
