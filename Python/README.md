@@ -59,7 +59,7 @@ python3 sign.py "./my_ecdsa521.pem" "my-secret-pem-password" "pre-shared-key-id"
 
 Please make sure you have read and understood the associated
 [documentation on implementing message
-signing.](https://docs.upvest.co/tutorials/implementing_http_signatures)
+signing.](https://docs.upvest.co/tutorials/implementing_http_signatures_v15)
 
 Though the top-level `sign.py` script is informative in terms of how
 payloads can be structured, the core of the logic in this example
