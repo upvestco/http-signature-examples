@@ -22,7 +22,6 @@ import sys
 
 import upvest.http as up_http
 
-import logging
 import http.client as http_client
 
 
