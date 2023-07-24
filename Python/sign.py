@@ -41,7 +41,7 @@ class APIError(Exception):
 
     def __init__(self, response):
         self.message=f"Unexpected HTTP response: {response}," \
-            + f"{response.reason}"):
+            + f"{response.reason}"
         self.response = response
         super().__init__(self.message)
 
