@@ -13,7 +13,7 @@ you'll need to securely access the Upvest Investment API.
 - It is assumed that you have Python3 installed on your machine,
   following whatever procedure is suggested/validated in your company.
 
-The easiest way to prepare your machine to the run the example is to
+The easiest way to prepare your machine to run the example is to
 use a Python3 virtual environment. The following steps will clone this
 repository and set up such an environment:
 
