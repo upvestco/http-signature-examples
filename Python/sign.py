@@ -22,7 +22,6 @@ import sys
 
 import upvest.http as up_http
 
-import http.client as http_client
 
 
 # Setting the environment variable "DEBUG" to any value will cause
