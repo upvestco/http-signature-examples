@@ -24,7 +24,7 @@ import upvest.http as up_http
 
 
 # Setting the environment variable "DEBUG" to any value will cause
-# extra debugging information to be ommitted from the HTTP connection.
+# extra debugging information to be emitted from the HTTP connection.
 if "DEBUG" in os.environ:
     http_client.HTTPConnection.debuglevel = 1
     logging.basicConfig()
