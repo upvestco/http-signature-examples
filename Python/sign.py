@@ -23,7 +23,6 @@ import sys
 import upvest.http as up_http
 
 
-
 # Setting the environment variable "DEBUG" to any value will cause
 # extra debugging information to be ommitted from the HTTP connection.
 if "DEBUG" in os.environ:
