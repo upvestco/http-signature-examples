@@ -10,7 +10,7 @@ you'll need to securely access the Upvest Investment API.
 # Installing the example
 
 **Prerequisites**
-- It is assumed that you have python 3 installed on your machine,
+- It is assumed that you have Python3 installed on your machine,
   following whatever procedure is suggested/validated in your company.
 
 The easiest way to prepare your machine to the run the example is to
