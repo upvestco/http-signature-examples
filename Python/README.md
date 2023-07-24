@@ -35,7 +35,7 @@ Should you wish to exit the virtual environment, you can simply issue
 the `deactivate` command.
 
 
-You can now install the projects dependencies into your virtual
+You can now install the project's dependencies into your virtual
 environment (remembering to reactivate it first if you just issued the
 `deactivate` command).
 
