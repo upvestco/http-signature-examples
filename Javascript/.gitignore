@@ -1,0 +1,6 @@
+package-lock.json
+.env
+*.pem
+
+# NOTE: We do *NOT* ignore the `node_modules` directory here so that it can be a shared Docker volume.
+# But do not worry, the *contents* of the `node_modules` directory get ignored by `node_modules/.gitignore`.

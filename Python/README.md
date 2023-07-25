@@ -18,7 +18,7 @@ use a Python3 virtual environment. The following steps will clone this
 repository and set up such an environment:
 
 ```sh
-git clone git@github.com/toknapp/http-signature-examples.git 
+git clone git@github.com:upvestco/http-signature-examples.git
 cd http-signature-examples/Python
 python3 -m venv ./venv
 source ./venv/bin/activate
