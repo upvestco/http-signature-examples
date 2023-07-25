@@ -40,7 +40,7 @@ class UpvestAPI():
     # We always use HTTPS, so there's no need to have the consumer
     # pass this in.
     _protocol = "https"
-    
+
     def __init__(self, host, pem_file_path, pem_password, preshared_key_id,
                  client_id, client_secret, scopes=[]):
         """
@@ -144,36 +144,36 @@ class UpvestAPI():
             values["@query"] = "?" + parts.query
 
         # We only use the specified values.  Don't, for example, put all of your
-        # headers into your signature.  
+        # headers into your signature.
         for key in content_keys:
             value = values[key]
             sig_value += f'"{key}": {value}\n'
-        
+
         sig_value += f'"@signature-params": {sig_params}'
         sig_input = 'sig1=' + sig_params
         return sig_input, sig_value
-    
+
     def _sign(self, request, path, created, content_keys=[]):
         sig_input, sig_value = self._make_signature_payload(
             request, created, content_keys)
         signature = base64.b64encode(
             self._pk.sign(sig_value.encode('utf-8'), ECDSA(hashes.SHA512())))
         request.headers["Signature"] = 'sig1=:%s:' % signature.decode()
-        request.headers["Signature-Input"] = sig_input        
+        request.headers["Signature-Input"] = sig_input
         return request
-    
+
     def _auth(self):
         # If we have a current token with plenty of time left before
         # it expires, we'll just use that, otherwise, request a new one.
         base_time = datetime.datetime.now()
         if self._token_expires > base_time + datetime.timedelta(
                 self._token_expiry_buffer):
-            return 
+            return
 
         path = "/auth/token"
         url = self._make_url(path)
         created = datetime.datetime.now()
-        
+
         req = requests.Request(
             "POST",
             url,
@@ -195,9 +195,9 @@ class UpvestAPI():
         content_keys = ['accept', 'content-length', 'content-type',
                         'upvest-client-id', '@method', '@path',
                         'content-digest', 'date']
-        
+
         req = self._sign(prepped, path, created, content_keys=content_keys)
-        
+
         resp = self._session.send(prepped)
         if resp.status_code != 200:
             raise AuthorisationFailedError(resp)
@@ -211,13 +211,13 @@ class UpvestAPI():
         # You want to transmit something that looks like:
         #       749d0a18-a45f-4acd-bb2c-e93112da0660
         return str(uuid.uuid4())
-    
+
 
     def _request_without_payload(self, method, path, params=None):
         self._auth()
         # Note: These requests don't need Content-Length or Content-Digest in
         #       the content_keys.  These elements are both derived from the
-        #       request body and thus 
+        #       request body and thus
         content_keys = ['accept', 'content-type',
                         'upvest-client-id', '@method', '@path',
                         'date', 'authorization']
@@ -240,7 +240,7 @@ class UpvestAPI():
                 "Content-Type": "application/json",
                 "Upvest-Signature-Version": "15",
             })
-        
+
         prepped = req.prepare()
         req = self._sign(prepped, path, created, content_keys=content_keys)
         return self._session.send(prepped)
@@ -264,7 +264,7 @@ class UpvestAPI():
         # when they shouldn't be. It's also required in the signature for POST
         # requests.
         idempotency_key = self._gen_idempotency_key()
-        
+
         req = requests.Request(
             method,
             url,
@@ -279,14 +279,13 @@ class UpvestAPI():
                 "Idempotency-Key": idempotency_key,
             },
             json=json)
-        
+
         prepped = req.prepare()
         # Again, we only need the digest if we have a payload.
         if json:
             req = self._add_digest(prepped)
         req = self._sign(req, path, created, content_keys=content_keys)
         return self._session.send(req)
-        
 
     def get(self, path, params=None):
         """Get performs an HTTP GET request against the Upvest Investment API.
@@ -308,7 +307,7 @@ class UpvestAPI():
                 The path to the endpoint you wish to GET. This value should
                 always begin with a leading '/'. e.g. /fees/collections
 
-        json 
+        json
                 (optional) A JSON serializable Python object to send in the body
                 of the Request.
         """
@@ -321,7 +320,7 @@ class UpvestAPI():
                 The path to the endpoint you wish to GET. This value should
                 always begin with a leading '/'. e.g. /fees/collections
 
-        json 
+        json
                 (optional) A JSON serializable Python object to send in the body
                 of the Request.
         """
@@ -334,7 +333,7 @@ class UpvestAPI():
                 The path to the endpoint you wish to GET. This value should
                 always begin with a leading '/'. e.g. /fees/collections
 
-        json 
+        json
                 (optional) A JSON serializable Python object to send in the body
                 of the Request.
         """
@@ -354,5 +353,3 @@ class UpvestAPI():
                 query section of the URL.
         """
         return self._request_without_payload("DELETE", path, params=params)
-        
-        

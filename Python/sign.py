@@ -34,7 +34,6 @@ if "DEBUG" in os.environ:
     requests_log.propagate = True
 
 
-
 class APIError(Exception):
     "Raised when we get an unexpected response from the API"
 
@@ -50,7 +49,7 @@ def get_users(api, limit=100, offset=0):
 
     api
                 An instance of the UpvestAPI class.
-    
+
     limit
                 (optional) the maximum number of users to return.
 
@@ -61,12 +60,13 @@ def get_users(api, limit=100, offset=0):
 
     """
     params = {"limit": limit, "offset": offset}
-    
+
     resp = api.get("/users", params=params)
     print(f"Requested a list of 2 users, and got: {resp} {resp.reason}\n")
     if resp.status_code != 200:
         raise APIError(resp)
     return resp.json()
+
 
 def create_user(api, user):
     """
@@ -105,7 +105,7 @@ def delete_user(api, user_id):
     if resp.status_code != 202:
         raise APIError(resp)
     return True
-    
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 6:
@@ -134,8 +134,7 @@ if __name__ == "__main__":
     # We could do something with these users, but for now it's enough
     # just to get them succesfully.
     users = get_users(api, limit=2)
-    
-    
+
     user = create_user(api, {
         "first_name": "Marcel",
         "last_name": "Schwarz",
@@ -166,5 +165,3 @@ if __name__ == "__main__":
     })
 
     deleted = delete_user(api, user['id'])
-        
-
