@@ -105,11 +105,12 @@ class UpvestAPI():
         # will end up with an invalid signature.
         if request.body is not None:
             if type(request.body) is bytes:
-                digest = hashlib.sha512(request.body).digest()
+                body_bytes = request.body
             else:
-                digest = hashlib.sha512(request.body.encode("utf-8")).digest()
-            request.headers["Content-Digest"] = "sha-512=:%s:" % \
-                base64.b64encode(digest).decode()
+                body_bytes = request.body.encode("utf-8")
+            digest_bytes = hashlib.sha512(body_bytes).digest()
+            digest_base64 = base64.b64encode(digest_bytes).decode()
+            request.headers["Content-Digest"] = f"sha-512=:{digest_base64}:"
         return request
 
     def _make_sig_key_names(self, content_keys):
@@ -156,9 +157,9 @@ class UpvestAPI():
     def _sign(self, request, path, created, content_keys=[]):
         sig_input, sig_value = self._make_signature_payload(
             request, created, content_keys)
-        signature = base64.b64encode(
-            self._pk.sign(sig_value.encode('utf-8'), ECDSA(hashes.SHA512())))
-        request.headers["Signature"] = 'sig1=:%s:' % signature.decode()
+        signature_base64 = base64.b64encode(
+            self._pk.sign(sig_value.encode('utf-8'), ECDSA(hashes.SHA512()))).decode()
+        request.headers["Signature"] = f'sig1=:{signature_base64}:'
         request.headers["Signature-Input"] = sig_input
         return request
 
@@ -236,7 +237,7 @@ class UpvestAPI():
                                    localtime=False, usegmt=True),
                 "Accept": "application/json",
                 "Upvest-Client-Id": self._client_id,
-                "Authorization": "Bearer %s" % self._token["access_token"],
+                "Authorization": f"Bearer {self._token['access_token']}",
                 "Content-Type": "application/json",
                 "Upvest-Signature-Version": "15",
             })
@@ -273,7 +274,7 @@ class UpvestAPI():
                                    localtime=False, usegmt=True),
                 "Accept": "application/json",
                 "Upvest-Client-Id": self._client_id,
-                "Authorization": "Bearer %s" % self._token["access_token"],
+                "Authorization": f"Bearer {self._token['access_token']}",
                 "Content-Type": "application/json",
                 "Upvest-Signature-Version": "15",
                 "Idempotency-Key": idempotency_key,
