@@ -89,7 +89,7 @@ header to be calculated and included in the headers and signature
 payload.  Request types that don't have a payload in the body (`get`
 and `delete`) must omit the `Content-Digest`.
 
-It is important to respect theses distinctions in your own requests.
+It is important to respect these distinctions in your own requests.
 Generating a signature with the wrong types or wrong format of input
 is the most common kind of error you'll see in creating the message
 signatures, and often the hardest to debug.
