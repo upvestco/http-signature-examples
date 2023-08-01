@@ -14,6 +14,7 @@
 #   pip3 install requests
 
 
+import argparse
 import http.client as http_client
 import json
 import logging
@@ -107,28 +108,62 @@ def delete_user(api, user_id):
     return True
 
 
-if __name__ == "__main__":
-    if len(sys.argv) != 6:
-        print("sign.py <PEM FILE> <PEM password> <Preshared Key ID> "
-              "<Client ID> <Client Secret>\n")
-        sys.exit(1)
+def get_cli_args():
+    parser = argparse.ArgumentParser(description='Example for HTTP message signatures with the Upvest Investment API.')
+    parser.add_argument('-k', '--keyfile',
+                        required=True,
+                        type=argparse.FileType('rb'),
+                        help='A file with the private key, in .pem format.')
+    parser.add_argument('-p', '--password',
+                        required=True,
+                        metavar='P@55W0RD',
+                        type=str,
+                        help='The password for decrypting the key file.')
+    parser.add_argument('-i', '--keyid', '--key-id',
+                        required=True,
+                        metavar='KEYID',
+                        type=str,
+                        help='The key ID issued by Upvest. Comes as a UUID.')
+    parser.add_argument('-c', '--clientid', '--client-id',
+                        required=True,
+                        metavar='CLIENTID',
+                        type=str,
+                        help='The client ID issued by Upvest. Comes as a UUID.')
+    parser.add_argument('-s', '--clientsecret', '--client-secret',
+                        required=True,
+                        metavar='CLIENTSECRET',
+                        type=str,
+                        help='The client secret issued by Upvest.')
+    parser.add_argument('-H', '--host',
+                        required=False,
+                        default='sandbox.upvest.co',
+                        metavar='HOST',
+                        type=str,
+                        help='The API host. Without the https:// part.')
 
-    pem_file = sys.argv[1]
-    pem_password = bytes(sys.argv[2], 'utf-8')
-    preshared_key_id = sys.argv[3]
-    client_id = sys.argv[4]
-    client_secret = sys.argv[5]
+    args = parser.parse_args()
+
+    with args.keyfile as kf:
+        keyfile_content = kf.read()
+
+    password_bytes = args.password.encode(encoding='utf-8')
+
+    return (keyfile_content, password_bytes, args.keyid, args.clientid, args.clientsecret, args.host)
+
+
+def main():
+    (keyfile_content, password_bytes, keyid, clientid, clientsecret, host) = get_cli_args()
 
     # The HTTP Message Signing, and auth token handling is bundled up
     # in the UpvestAPI class, that's where you should focus your
     # attention if you need to implement this functionality from
     # scratch.
-    api = up_http.UpvestAPI("sandbox.upvest.co",
-                            pem_file,
-                            pem_password,
-                            preshared_key_id,
-                            client_id,
-                            client_secret,
+    api = up_http.UpvestAPI(host,
+                            keyfile_content,
+                            password_bytes,
+                            keyid,
+                            clientid,
+                            clientsecret,
                             scopes=["users:admin", "portfolios:admin"])
 
     # We could do something with these users, but for now it's enough
@@ -165,3 +200,7 @@ if __name__ == "__main__":
     })
 
     deleted = delete_user(api, user['id'])
+
+
+if __name__ == "__main__":
+    main()

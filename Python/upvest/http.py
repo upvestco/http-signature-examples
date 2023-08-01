@@ -41,7 +41,7 @@ class UpvestAPI():
     # pass this in.
     _protocol = "https"
 
-    def __init__(self, host, pem_file_path, pem_password, preshared_key_id,
+    def __init__(self, host, keyfile_content, password_bytes, preshared_key_id,
                  client_id, client_secret, scopes=[]):
         """
         Creates a new UpvestAPI object based on your PEM file and credentials.
@@ -50,12 +50,13 @@ class UpvestAPI():
                 The hostname you wish to make requests against,
                 e.g. sandbox.upvest.co
 
-        pem_file_path
-                The filesystem path to your PEM file containing the private key
+        keyfile_content
+                The contents of the PEM file with the private key
                 from the keypair you generated.
 
-        pem_password
-                The password to decrypt the PEM file.
+        password_bytes
+                The password to decrypt the PEM file, converted into bytes
+                already.
 
         preshared_key_id
                 The key ID that identifies the keypair.  This needs to be
@@ -79,7 +80,7 @@ class UpvestAPI():
         """
 
         self._host = host
-        self._pk = self._read_private_key_from_pem(pem_file_path, pem_password)
+        self._pk = self._decrypt_private_key_from_pem(keyfile_content, password_bytes)
         self._preshared_key_id = preshared_key_id
         self._client_id = client_id
         self._client_secret = client_secret
@@ -88,11 +89,8 @@ class UpvestAPI():
         self._token = None
         self._token_expires = datetime.datetime.now()
 
-    def _read_private_key_from_pem(self, pem_file, pem_password):
-        with open(pem_file, 'rb') as fh:
-            key = fh.read()
-            decrypted_key = load_pem_private_key(key, pem_password)
-        return decrypted_key
+    def _decrypt_private_key_from_pem(self, keyfile_content, password_bytes):
+        return load_pem_private_key(keyfile_content, password_bytes)
 
     def _make_url(self, path):
         return self._protocol + "://" + self._host + path
@@ -114,7 +112,7 @@ class UpvestAPI():
         return request
 
     def _make_sig_key_names(self, content_keys):
-        # Note: the " marks around the key names. This is an explicit requirment
+        # Note: the " marks around the key names. This is an explicit requirement
         #       in version 15 of the message signature algorithm. When using
         #       the early v6 algorithm, Upvest requires that these
         #       double-quotation marks are *not* present.

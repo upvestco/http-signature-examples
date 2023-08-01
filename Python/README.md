@@ -51,8 +51,12 @@ invoking the following (replacing the values with your real PEM file,
 PEM Password, pre-shared Key ID, Client ID and Client Secret):
 
 ```sh
-python3 sign.py "./my_ecdsa521.pem" "my-secret-pem-password" "pre-shared-key-id" \
-	"my-client-id" "my-client-secret"
+python3 sign.py \
+    --keyfile "./my_ecdsa521.pem" \
+    --password "my-secret-pem-password" \
+    --keyid "pre-shared-key-id" \
+    --client-id "my-client-id" \
+    --client-secret "my-client-secret"
 ```
 
 # Understanding the example
