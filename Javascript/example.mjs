@@ -7,6 +7,15 @@ import { UpvestNodeAxiosInterceptor } from './UpvestNodeAxiosInterceptor.mjs';
 import { NodeKeyLoader } from './NodeKeyLoader.mjs';
 import { inspect, inspectAxiosResponse, inspectAxiosError } from './util.mjs';
 
+const printSignatureBase = (response) => {
+    if ('signatureBase' in response.config) {
+        console.log('signatureBase ==');
+        console.log(response.config.signatureBase);
+        console.log('base64(signatureBase) ==');
+        console.log(btoa(response.config.signatureBase));
+    }
+}
+
 const getAuthToken = async (api) => {
     try {
         const headers = {
@@ -19,6 +28,7 @@ const getAuthToken = async (api) => {
             'scope': 'users:admin'
         });
         const response = await api.post('auth/token', body.toString(), { headers });
+        printSignatureBase(response);
         inspectAxiosResponse(response);
         return response.data;
     } catch (error) {
@@ -39,6 +49,7 @@ const listUsers = async (api, authToken) => {
             'limit': 2,
         };
         const response = await api.get('users', { headers: withAuthHeader({}, authToken), params });
+        printSignatureBase(response);
         inspectAxiosResponse(response);
         return response.data;
     } catch (error) {
@@ -81,6 +92,7 @@ const createUser = async (api, authToken) => {
             }
         };
         const response = await api.post('users', body, { headers: withAuthHeader(headers, authToken) });
+        printSignatureBase(response);
         inspectAxiosResponse(response);
         return response.data;
     } catch (error) {
@@ -94,6 +106,7 @@ const deleteUser = async (api, authToken, userId) => {
             'idempotency-key': randomUUID(),
         };
         const response = await api.delete(`users/${userId}`, { headers: withAuthHeader(headers, authToken) });
+        printSignatureBase(response);
         inspectAxiosResponse(response);
         return response.data;
     } catch (error) {

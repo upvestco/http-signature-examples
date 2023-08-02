@@ -149,9 +149,6 @@ export class Signature {
         const signature = this.crypto.getSignatureAsBase64(signatureBase, this.signatureKey);
         outputHeaders['signature'] = `sig1=:${signature}:`;
 
-        // TODO Expose `signatureBase` so that it is available for inspection,
-        //      debugging and comparison with implementations in other languages.
-
-        return outputHeaders;
+        return { outputHeaders, signatureBase };
     }
 }

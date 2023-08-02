@@ -79,7 +79,7 @@ export function upvestNodeSign({
     const crypto = new NodeCryptoProvider();
     const canonicaliser = new Canonicaliser(lodash, crypto);
     const sig = new Signature(canonicaliser, crypto);
-    const outputHeaders = sig.sign({
+    const { outputHeaders, signatureBase } = sig.sign({
         method,
         url,
         headers: headersToSign,
@@ -97,5 +97,5 @@ export function upvestNodeSign({
     // @see https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures-15
     // NOTE This header is excluded from being covered by the signature itself.
     const mandatoryVersionSelectHeader = { 'upvest-signature-version': '15' };
-    return Object.assign(outputHeaders, mandatoryVersionSelectHeader);
+    return { outputHeaders: Object.assign(outputHeaders, mandatoryVersionSelectHeader), signatureBase };
 }

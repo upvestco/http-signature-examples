@@ -34,7 +34,7 @@ export class UpvestNodeAxiosInterceptor {
         const headers = Object.assign(defaultHeaders, config.headers);
 
         try {
-            const outputHeaders = upvestNodeSign({
+            const { outputHeaders, signatureBase } = upvestNodeSign({
                 method: config.method,
                 url: whatwgUrl,
                 headers,
@@ -45,6 +45,9 @@ export class UpvestNodeAxiosInterceptor {
             // TODO Canonicalise `config.headers` to lower case, so that outputHeaders can override them.
             // TODO Consider throwing an error if `config.headers` contains headers that are supposed to be produced by the signing, but have a different value.
             config.headers = Object.assign(config.headers, outputHeaders);
+
+            // Exposing this for debugging purposes
+            config.signatureBase = signatureBase;
         } catch (err) {
             inspect(err);
             throw err;
