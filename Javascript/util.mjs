@@ -9,6 +9,7 @@ export const inspectAxiosResponse = response => {
             host: response.request.host,
             path: response.request.path,
             headers: response.request.getHeaders(),
+            data: response.config.data,
         },
         response: {
             status: response.status,

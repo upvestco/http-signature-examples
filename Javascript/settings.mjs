@@ -7,6 +7,7 @@ export const SERVER_BASE_URL = env.SERVER_BASE_URL;
 export const KEY_ID = env.KEY_ID;
 export const CLIENT_ID = env.CLIENT_ID;
 export const CLIENT_SECRET = env.CLIENT_SECRET;
+export const SCOPES = env.SCOPES.split(',');
 
 export default {
     PRIVATE_KEY_FILE,
@@ -15,4 +16,5 @@ export default {
     KEY_ID,
     CLIENT_ID,
     CLIENT_SECRET,
+    SCOPES,
 }

@@ -25,7 +25,7 @@ const getAuthToken = async (api) => {
             'client_id': settings.CLIENT_ID,
             'client_secret': settings.CLIENT_SECRET,
             'grant_type': 'client_credentials',
-            'scope': 'users:admin'
+            'scope': settings.SCOPES.join(' ')
         });
         const response = await api.post('auth/token', body.toString(), { headers });
         printSignatureBase(response);
