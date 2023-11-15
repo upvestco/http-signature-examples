@@ -1,3 +1,9 @@
-*.pem
 __pycache__
-venv
+.env
+*.pem
+
+# NOTE: We do *NOT* ignore the `venv` directory here so that it can be a shared Docker volume.
+# But do not worry, the *contents* of the `venv` directory get ignored by `venv/.gitignore`.
+#
+# The `bin` sub-directory inside the `venv` shared between Docker container and host machine might be incompatible,
+# but sharing `venv/lib/python3.x/site-packages` let's you read the source code of those packages.
