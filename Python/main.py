@@ -1,11 +1,19 @@
 import base64
 import json
+import sys
 
 import requests
 
 import settings
 
-import upvest_http_message_signatures
+from upvest_investment_api import (
+    make_idempotency_key,
+    has_requests_auth
+)
+if has_requests_auth:
+    from upvest_investment_api import UpvestRequestsAuth
+else:
+    sys.exit("You need to install the upvest-investment-api Python package with the requests-auth extra, like so: `pip install upvest-investment-api[requests-auth]`")
 
 
 def pretty_print_signature_input(signature_input):
@@ -40,7 +48,7 @@ def pretty_print_response(res):
 
 
 def setup_upvest_auth():
-    return upvest_http_message_signatures.UpvestRequestsAuth(
+    return UpvestRequestsAuth(
         private_key_pem=settings.UPVEST_API_HTTP_SIGN_PRIVATE_KEY,
         private_key_password_bytes=settings.UPVEST_API_HTTP_SIGN_PRIVATE_KEY_PASSPHRASE_BYTES,
         key_id=settings.UPVEST_API_KEY_ID,
@@ -88,7 +96,7 @@ def main():
             'confirmed_at': '2020-02-03T17:14:46Z'
         }
     }
-    idempotency_key = upvest_http_message_signatures.make_idempotency_key()
+    idempotency_key = make_idempotency_key()
     res = requests.post(f'{settings.UPVEST_API_BASE_URL}/users', json=new_user, auth=upvest_auth.with_idempotency_key(idempotency_key))
     pretty_print_response(res)
     user_id = res.json()['id']

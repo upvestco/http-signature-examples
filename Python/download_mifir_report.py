@@ -2,6 +2,7 @@
 import datetime
 import gzip
 import io
+import sys
 import warnings
 import zipfile
 
@@ -11,12 +12,16 @@ import requests
 
 # local imports
 import settings
-import upvest_http_message_signatures
+from upvest_investment_api import has_requests_auth
+if has_requests_auth:
+    from upvest_investment_api import UpvestRequestsAuth
+else:
+    sys.exit("You need to install the upvest-investment-api Python package with the requests-auth extra, like so: `pip install upvest-investment-api[requests-auth]`")
 
 
-def setup_upvest_auth() -> upvest_http_message_signatures.UpvestRequestsAuth:
+def setup_upvest_auth() -> UpvestRequestsAuth:
     """Uses settings from env vars to initialise an `auth` middleware for the `requests` library."""
-    return upvest_http_message_signatures.UpvestRequestsAuth(
+    return UpvestRequestsAuth(
         private_key_pem=settings.UPVEST_API_HTTP_SIGN_PRIVATE_KEY,
         private_key_password_bytes=settings.UPVEST_API_HTTP_SIGN_PRIVATE_KEY_PASSPHRASE_BYTES,
         key_id=settings.UPVEST_API_KEY_ID,
@@ -64,7 +69,7 @@ class DownloadError(Exception):
     pass
 
 
-def download_mifir_report_file_content(report_coverage_date: datetime.date, upvest_auth: upvest_http_message_signatures.UpvestRequestsAuth) -> bytes:
+def download_mifir_report_file_content(report_coverage_date: datetime.date, upvest_auth: UpvestRequestsAuth) -> bytes:
     """Downloads a MiFir report file from the Upvest Investment API."""
     filename_timestamp = report_coverage_date.strftime('%Y%m%d')
     filename = settings.UPVEST_API_FILENAME_TEMPLATE.format(filename_timestamp=filename_timestamp)

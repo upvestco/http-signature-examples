@@ -1,6 +1,9 @@
 __pycache__
 .env
 *.pem
+*.priv
+*.pub
+*passphrase.txt
 
 # NOTE: We do *NOT* ignore the `venv` directory here so that it can be a shared Docker volume.
 # But do not worry, the *contents* of the `venv` directory get ignored by `venv/.gitignore`.

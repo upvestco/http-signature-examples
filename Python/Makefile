@@ -47,7 +47,7 @@ run: build
 		--volume $(HERE)/run.sh:/work/run.sh \
 		--volume $(HERE)/run_download.sh:/work/run_download.sh \
 		--volume $(HERE)/settings.py:/work/settings.py \
-		--volume $(HERE)/upvest_http_message_signatures.py:/work/upvest_http_message_signatures.py \
+		--volume $(HERE)/pkg/upvest_investment_api/src/upvest_investment_api:/work/pkg/upvest_investment_api/src/upvest_investment_api \
 		--volume $(HERE)/venv:/work/venv \
 		$(DOCKER_IMAGE_LOCAL_DEV)
 
