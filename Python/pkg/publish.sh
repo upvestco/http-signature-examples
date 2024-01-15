@@ -27,6 +27,7 @@ python3 -m pip install --upgrade pip build twine
 
 echo "When asked, please enter '__token__' as the username, and a PyPI API token as the password."
 echo "For how to get such a token, see https://packaging.python.org/en/latest/tutorials/packaging-projects/#uploading-the-distribution-archives"
+echo "HINT: You can install such a token in a ~/.pypirc file, then you won't get asked."
 
 # TODO Automate publishing.
 

@@ -41,6 +41,44 @@ except ImportError:
     has_requests_auth = False
 
 
+try:
+    from .file_download import (
+        DownloadError,
+        download_file_content,
+        decrypt_pgp,
+    )
+    # TODO Maybe check that the required versions of `requests` and `PGPy` has been met?
+    # See https://discuss.python.org/t/how-to-detect-which-extras-were-installed-at-runtime/15367/9
+    # See https://github.com/pypa/packaging-problems/issues/215
+    export_file_download = (
+        "DownloadError",
+        "download_file_content",
+        "decrypt_pgp",
+    )
+    has_file_download = True
+except ImportError:
+    export_file_download = tuple()
+    has_file_download = False
+
+
+try:
+    from .env_settings import (
+        HttpSignatureSettings,
+        FileDownloadSettings,
+    )
+    # TODO Maybe check that the required version of `environs` has been met?
+    # See https://discuss.python.org/t/how-to-detect-which-extras-were-installed-at-runtime/15367/9
+    # See https://github.com/pypa/packaging-problems/issues/215
+    export_env_settings = (
+        "HttpSignatureSettings",
+        "FileDownloadSettings",
+    )
+    has_env_settings = True
+except ImportError:
+    export_env_settings = tuple()
+    has_env_settings = False
+
+
 __all__ = (
     "CanonicalisationError",
     "CREATED_NOW_SENTINEL_VALUE",
@@ -50,4 +88,6 @@ __all__ = (
     "UpvestHttpMessageSigner",
     "make_idempotency_key",
     "has_requests_auth",
-) + export_requests_auth
+    "has_file_download",
+    "has_env_settings",
+) + export_requests_auth + export_file_download + export_env_settings

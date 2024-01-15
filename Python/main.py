@@ -1,19 +1,42 @@
+# Copyright © 2024 Upvest GmbH <support@upvest.co>
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+#     http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+# Python Standard Library imports
 import base64
 import json
 import sys
 
+# 3rd-party imports
 import requests
 
-import settings
-
+# "example-as-a-usable-package" import
 from upvest_investment_api import (
     make_idempotency_key,
-    has_requests_auth
+    has_requests_auth,
+    has_env_settings
 )
+
 if has_requests_auth:
     from upvest_investment_api import UpvestRequestsAuth
 else:
     sys.exit("You need to install the upvest-investment-api Python package with the requests-auth extra, like so: `pip install upvest-investment-api[requests-auth]`")
+
+if has_env_settings:
+    from upvest_investment_api import HttpSignatureSettings
+else:
+    sys.exit("You need to install the upvest-investment-api Python package with the env-settings extra, like so: `pip install upvest-investment-api[env-settings]`")
 
 
 def pretty_print_signature_input(signature_input):
@@ -47,14 +70,14 @@ def pretty_print_response(res):
     print('-----------END   RESPONSE-----------')
 
 
-def setup_upvest_auth():
+def setup_upvest_auth(settings: HttpSignatureSettings) -> UpvestRequestsAuth:
     return UpvestRequestsAuth(
-        private_key_pem=settings.UPVEST_API_HTTP_SIGN_PRIVATE_KEY,
-        private_key_password_bytes=settings.UPVEST_API_HTTP_SIGN_PRIVATE_KEY_PASSPHRASE_BYTES,
-        key_id=settings.UPVEST_API_KEY_ID,
-        client_id=settings.UPVEST_API_CLIENT_ID,
-        client_secret=settings.UPVEST_API_CLIENT_SECRET,
-        scopes=settings.UPVEST_API_SCOPES,
+        private_key_pem=settings.HTTP_SIGN_PRIVATE_KEY,
+        private_key_passphrase=settings.HTTP_SIGN_PRIVATE_KEY_PASSPHRASE,
+        key_id=settings.KEY_ID,
+        client_id=settings.CLIENT_ID,
+        client_secret=settings.CLIENT_SECRET,
+        scopes=settings.SCOPES,
         callback_auth_response=pretty_print_response,
         callback_signature_input=pretty_print_signature_input,
         callback_request=pretty_print_request
@@ -62,10 +85,11 @@ def setup_upvest_auth():
 
 
 def main():
-    upvest_auth = setup_upvest_auth()
+    settings = HttpSignatureSettings()
+    upvest_auth = setup_upvest_auth(settings)
 
     params = {'limit': 2, 'offset': 0}
-    res = requests.get(f'{settings.UPVEST_API_BASE_URL}/users', params=params, auth=upvest_auth)
+    res = requests.get(f'{settings.BASE_URL}/users', params=params, auth=upvest_auth)
     pretty_print_response(res)
 
     new_user = {
@@ -97,11 +121,11 @@ def main():
         }
     }
     idempotency_key = make_idempotency_key()
-    res = requests.post(f'{settings.UPVEST_API_BASE_URL}/users', json=new_user, auth=upvest_auth.with_idempotency_key(idempotency_key))
+    res = requests.post(f'{settings.BASE_URL}/users', json=new_user, auth=upvest_auth.with_idempotency_key(idempotency_key))
     pretty_print_response(res)
     user_id = res.json()['id']
 
-    res = requests.delete(f'{settings.UPVEST_API_BASE_URL}/users/{user_id}', auth=upvest_auth)
+    res = requests.delete(f'{settings.BASE_URL}/users/{user_id}', auth=upvest_auth)
     pretty_print_response(res)
 
 

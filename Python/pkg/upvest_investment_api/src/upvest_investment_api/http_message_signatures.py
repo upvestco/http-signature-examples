@@ -56,8 +56,8 @@ class HttpMessageSigner():
 
     Also, tries to stay agnostic of any HTTP client libraries.
     """
-    def __init__(self, *, private_key_pem: bytes, private_key_password_bytes: bytes, key_id: str):
-        self.private_key = load_pem_private_key(private_key_pem, private_key_password_bytes)
+    def __init__(self, *, private_key_pem: bytes, private_key_passphrase: bytes, key_id: str):
+        self.private_key = load_pem_private_key(private_key_pem, private_key_passphrase)
         self.key_id = key_id
 
     def _get_content_digest_and_length_headers(self, body: bytes | None) -> dict[str, str]:
@@ -301,7 +301,7 @@ class UpvestHttpMessageSigner():
         self,
         *,
         private_key_pem: bytes,
-        private_key_password_bytes: bytes,
+        private_key_passphrase: bytes,
         key_id: str,
         client_id: str,
         signer: HttpMessageSigner | None = None
@@ -310,7 +310,7 @@ class UpvestHttpMessageSigner():
         if signer is None:
             self.signer = HttpMessageSigner(
                 private_key_pem=private_key_pem,
-                private_key_password_bytes=private_key_password_bytes,
+                private_key_passphrase=private_key_passphrase,
                 key_id=key_id
             )
         else:

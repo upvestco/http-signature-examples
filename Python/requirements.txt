@@ -1,21 +1,5 @@
-# Explicit requirements
-environs==9.5.0
-PGPy==0.6.0
-
-# This code example should always refer to the latest version, so no pinned version here.
-# At least for now.
-# Our code examples do indeed require the "requests-auth" extra to be installed, so we do it here.
-upvest-investment-api[requests-auth]
-
-# Python internals
-pip==23.2.1
-setuptools==68.2.2
-wheel==0.41.2
-
-# 2nd level requirements for environs
-marshmallow==3.20.1
-packaging==23.1
-python-dotenv==1.0.0
-
-# 2nd level requirements for PGPy
-pyasn1==0.5.0
+# This code example should always refer to the latest version, so no pinned
+# version here. At least for now.
+# Our code examples do indeed require the "env-settings", "file-download" and
+# "requests-auth" extras to be installed, so we do it here.
+upvest-investment-api[env-settings,file-download,requests-auth]

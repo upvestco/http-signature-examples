@@ -49,7 +49,7 @@ class UpvestRequestsAuth(requests.auth.AuthBase):
         self,
         *,
         private_key_pem: bytes,
-        private_key_password_bytes: bytes,
+        private_key_passphrase: bytes,
         key_id: str,
         client_id: str,
         client_secret: str,
@@ -62,7 +62,7 @@ class UpvestRequestsAuth(requests.auth.AuthBase):
         if signer is None:
             self.signer = UpvestHttpMessageSigner(
                 private_key_pem=private_key_pem,
-                private_key_password_bytes=private_key_password_bytes,
+                private_key_passphrase=private_key_passphrase,
                 key_id=key_id,
                 client_id=client_id
             )
