@@ -103,15 +103,14 @@ def decrypt_report_file(report_file_content: bytes, dl_settings: FileDownloadSet
 
     See `.env.example` for how to configure this.
     """
-    if b'' == dl_settings.FILE_ENCRYPTION_PRIVATE_KEY:
-        # No key means no encryption.
+    if dl_settings.HAS_FILE_ENCRYPTION:
+        return decrypt_pgp(
+            dl_settings.FILE_ENCRYPTION_PRIVATE_KEY,
+            dl_settings.FILE_ENCRYPTION_PRIVATE_KEY_PASSPHRASE,
+            report_file_content
+        )
+    else:
         return report_file_content
-
-    return decrypt_pgp(
-        dl_settings.FILE_ENCRYPTION_PRIVATE_KEY,
-        dl_settings.FILE_ENCRYPTION_PRIVATE_KEY_PASSPHRASE,
-        report_file_content
-    )
 
 
 def get_most_recent_mifir_report(settings: HttpSignatureSettings, dl_settings: FileDownloadSettings) -> dict[str, bytes]:

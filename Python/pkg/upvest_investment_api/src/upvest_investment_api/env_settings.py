@@ -55,8 +55,14 @@ class FileDownloadSettings:
         env = Env()
         env.read_env(env_file, recurse=False)
         with env.prefixed(prefix):
-            self.FILE_ENCRYPTION_PRIVATE_KEY = load_private_key(env, 'FILE_ENCRYPTION_PRIVATE_KEY', prefix)
-            self.FILE_ENCRYPTION_PRIVATE_KEY_PASSPHRASE = bytes(env.str('FILE_ENCRYPTION_PRIVATE_KEY_PASSPHRASE'), 'utf-8')
+            try:
+                self.FILE_ENCRYPTION_PRIVATE_KEY = load_private_key(env, 'FILE_ENCRYPTION_PRIVATE_KEY', prefix)
+                self.HAS_FILE_ENCRYPTION = True
+            except EnvError:
+                # Well, it's optional, after all.
+                self.FILE_ENCRYPTION_PRIVATE_KEY = b''
+                self.HAS_FILE_ENCRYPTION = False
+            self.FILE_ENCRYPTION_PRIVATE_KEY_PASSPHRASE = bytes(env.str('FILE_ENCRYPTION_PRIVATE_KEY_PASSPHRASE', ''), 'utf-8')
             self.FILE_NAMESPACE = env.str('FILE_NAMESPACE', 'mifir_reports')
             # NOTE: The following value, including it's default, is a string which gets
             # formatted elsewhere. It must carry a `{filename_timestamp}` replacement

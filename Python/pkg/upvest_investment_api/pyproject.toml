@@ -15,7 +15,7 @@
 
 [project]
 name = "upvest_investment_api"
-version = "0.0.1a3"
+version = "0.0.1a4"
 authors = [
   { name="Raphael Huefner", email="raphael@upvest.co" },
   { name="Geoffrey Teale", email="geoffrey@upvest.co" },
