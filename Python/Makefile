@@ -8,12 +8,16 @@ export
 
 .DEFAULT_GOAL := run
 
-HTTP_SIGN_PRIVATE_KEY_FULL_FILE_NAME = $(shell readlink -f $(UPVEST_API_HTTP_SIGN_PRIVATE_KEY_FILENAME))
+DOCKER_HTTP_SIGN_PARAMS = ""
+ifneq (,$(UPVEST_API_HTTP_SIGN_PRIVATE_KEY_FILENAME))
+	HTTP_SIGN_PRIVATE_KEY_FULL_FILE_NAME = $(shell readlink -f $(UPVEST_API_HTTP_SIGN_PRIVATE_KEY_FILENAME))
+	DOCKER_HTTP_SIGN_PARAMS = --env UPVEST_API_HTTP_SIGN_PRIVATE_KEY_FILENAME=/work/http_sign_private_key.pem --volume $(HTTP_SIGN_PRIVATE_KEY_FULL_FILE_NAME):/work/http_sign_private_key.pem
+endif
 
 DOCKER_FILE_ENCRYPTION_PARAMS = ""
 ifneq (,$(UPVEST_API_FILE_ENCRYPTION_PRIVATE_KEY_FILENAME))
 	FILE_ENCRYPTION_PRIVATE_KEY_FULL_FILE_NAME = $(shell readlink -f $(UPVEST_API_FILE_ENCRYPTION_PRIVATE_KEY_FILENAME))
-	DOCKER_FILE_ENCRYPTION_PARAMS = --env UPVEST_API_FILE_ENCRYPTION_PRIVATE_KEY_FILENAME=/work/file_encryption_private_key.pem --volume $(FILE_ENCRYPTION_PRIVATE_KEY_FULL_FILE_NAME):/work/file_encryption_private_key.pem
+	DOCKER_FILE_ENCRYPTION_PARAMS = --env UPVEST_API_FILE_ENCRYPTION_PRIVATE_KEY_FILENAME=/work/file_encryption_private_key.asc --volume $(FILE_ENCRYPTION_PRIVATE_KEY_FULL_FILE_NAME):/work/file_encryption_private_key.asc
 endif
 
 DOCKER ?= docker
@@ -36,8 +40,7 @@ run: build
 		--interactive \
 		--env-file .env.example \
 		--env-file .env \
-		--env UPVEST_API_HTTP_SIGN_PRIVATE_KEY_FILENAME=/work/http_sign_private_key.pem \
-		--volume $(HTTP_SIGN_PRIVATE_KEY_FULL_FILE_NAME):/work/http_sign_private_key.pem \
+		$(DOCKER_HTTP_SIGN_PARAMS) \
 		$(DOCKER_FILE_ENCRYPTION_PARAMS) \
 		--volume $(HERE)/.env:/work/.env \
 		--volume $(HERE)/.env.example:/work/.env.example \
@@ -47,7 +50,7 @@ run: build
 		--volume $(HERE)/run.sh:/work/run.sh \
 		--volume $(HERE)/run_download.sh:/work/run_download.sh \
 		--volume $(HERE)/settings.py:/work/settings.py \
-		--volume $(HERE)/upvest_http_message_signatures.py:/work/upvest_http_message_signatures.py \
+		--volume $(HERE)/pkg:/work/pkg \
 		--volume $(HERE)/venv:/work/venv \
 		$(DOCKER_IMAGE_LOCAL_DEV)
 

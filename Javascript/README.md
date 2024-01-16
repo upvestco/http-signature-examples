@@ -42,7 +42,8 @@ cp .env.example .env
 ```
 
 Open the `.env` file with a text editor and fill in the values pertaining
-to the private key and to the API credentials.
+to the private key and to the API credentials as described in the comments in
+`.env`.
 
 
 ## Running the example
@@ -102,10 +103,10 @@ in this example is distributed across the following classes and one function:
 You will notice that the required headers and the input to the message
 signature vary based on the type of request being made. In
 particular, request types that carry a payload in the body of the
-message (`post`, `put`, `patch`) will require a `content-digest`
+message (`POST`, `PUT`, `PATCH`) will require a `content-digest`
 header to be calculated and included in the headers and signature
-payload. Request types that don't have a payload in the body (`get`
-and `delete`) must omit the `content-digest`.
+payload. Request types that don't have a payload in the body (`GET`
+and `DELETE`) must omit the `content-digest`.
 
 It is important to respect these distinctions in your own requests.
 Generating a signature with the wrong types or wrong format of input

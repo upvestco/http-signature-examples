@@ -1,0 +1,66 @@
+# Copyright © 2024 Upvest GmbH <support@upvest.co>
+
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+#     http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+[project]
+name = "upvest_investment_api"
+version = "0.0.1a4"
+authors = [
+  { name="Raphael Huefner", email="raphael@upvest.co" },
+  { name="Geoffrey Teale", email="geoffrey@upvest.co" },
+]
+maintainers = [
+  { name="Raphael Huefner", email="raphael@upvest.co" },
+  { name="Geoffrey Teale", email="geoffrey@upvest.co" },
+]
+description = "Utility code for interacting with the Upvest Investment API, mainly HTTP Message Signatures"
+readme = "README.md"
+license = {file = "LICENSE"}
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Financial and Insurance Industry",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Office/Business :: Financial :: Investment",
+]
+
+# NOTE: The following "minimal" versions are only what happened to be current when the code example was developed originally.
+# Now that this is converted into a Python package, maybe we should consider making these requirements less strict.
+# TODO: Research "earliest viable version" for each of the following dependencies:
+
+requires-python = ">=3.10"
+dependencies = [
+  "cryptography>=41.0.3",
+]
+
+[project.optional-dependencies]
+requests-auth = [
+  "requests>=2.31.0",
+]
+file-download = [
+  "requests>=2.31.0",
+  "PGPy>=0.6.0",
+]
+env-settings = [
+  "environs>=9.5.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/upvestco/http-signature-examples/tree/main/Python"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
