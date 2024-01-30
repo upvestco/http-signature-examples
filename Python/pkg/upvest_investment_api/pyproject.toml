@@ -15,7 +15,7 @@
 
 [project]
 name = "upvest_investment_api"
-version = "0.0.1a4"
+version = "0.0.1"
 authors = [
   { name="Raphael Huefner", email="raphael@upvest.co" },
   { name="Geoffrey Teale", email="geoffrey@upvest.co" },
@@ -28,7 +28,7 @@ description = "Utility code for interacting with the Upvest Investment API, main
 readme = "README.md"
 license = {file = "LICENSE"}
 classifiers = [
-  "Development Status :: 3 - Alpha",
+  "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
   "Intended Audience :: Financial and Insurance Industry",
   "License :: OSI Approved :: Apache Software License",
