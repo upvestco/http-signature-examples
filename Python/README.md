@@ -87,7 +87,7 @@ There, you just run this:
 The output is supposed to be a sequence of request / response pairs.
 
 
-## Running the file download eample directly on Python
+## Running the file download example directly on Python
 
 Please coordinate with Upvest staff for which date a MiFIR report file with
 actual transaction data is available.
