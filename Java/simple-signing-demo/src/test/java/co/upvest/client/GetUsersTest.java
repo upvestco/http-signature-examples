@@ -141,8 +141,8 @@ public class GetUsersTest {
             clientScope = properties.getProperty("UPVEST_API_CLIENT_SCOPE");
 
         } catch (IOException ex) {
-            logger.error("Failed to read properties or key file", ex);
-            throw new RuntimeException("Failed to read properties or key file", ex);
+            logger.error("Failed to read property or key file", ex);
+            throw new RuntimeException("Failed to read property or key file", ex);
         }
     }
 

@@ -15,9 +15,16 @@ the Upvest Investment API.
 This example makes the following assumptions:
 
 - You have Java 21 or later installed on your machine.
+- You have [Gradle](https://gradle.com) 8.9 or later installed on your machine.
+
+E.g. on MacOS
+```shell
+brew install openjdk gradle
+```
+
 - You have generated an ECDSA private / public key pair according to
   [our signature tutorial](https://docs.upvest.co/tutorials/implementing_http_signatures_v15#ecdsa).
-  (The Python code examples do not support Ed25519 signatures yet.)
+  (The code example does not support Ed25519 signatures yet.)
 - You have shared the public key with Upvest and have
   received a set of API credentials from Upvest.
 
@@ -29,25 +36,30 @@ Clone this repository:
 git clone git@github.com:upvestco/http-signature-examples.git
 ```
 
-Change directory to the Java/simple-signing-demo sub-directory and create
-a `env.properties` configuration file from the provided `env.properties.tmpl` template:
+The example is configured via environment variables. You need to make sure the following environment variables are set to the correct values and visible to child processes ("exported"):
 
-```sh
+```
+export UPVEST_API_HTTP_SIGN_PRIVATE_KEY_FILE="Path to the private key file"
+export UPVEST_API_HTTP_SIGN_PRIVATE_KEY_PASSPHRASE="Passphrase for the private key"
+export UPVEST_API_KEY_ID="API key ID"
+export UPVEST_URL="URL of the Upvest API"
+export UPVEST_API_CLIENT_ID="API client ID"
+export UPVEST_API_CLIENT_SECRET="API client secret"
+export UPVEST_API_CLIENT_SCOPE="API client scope"
+```
+
+Currently, the example will not attempt to read configuration from a file. 
+If you create your own `.env` file, and use eg. `bash` or `zsh`, you need to `source` it before you run `gradle`.
+
+```shell
 cd http-signature-examples/Java/simple-signing-demo
-cp env.properties.tmpl env.properties
+cp dot.env.template .env
 ```
+Set the values according to your environment. Make sure you don't check any sensitive information into version control (if you name the file something other than `.env`, add the filename to `.gitignore`).   
+Then
 
-
-Open the `env.properties` file with a text editor and fill in the values pertaining
-to the private key and to the API credentials as described in the comments.
-
-```
-UPVEST_API_HTTP_SIGN_PRIVATE_KEY_FILE= # Path to the private key file
-UPVEST_API_HTTP_SIGN_PRIVATE_KEY_PASSPHRASE= # Passphrase for the private key
-UPVEST_API_KEY_ID= # API key ID
-UPVEST_API_CLIENT_ID= # API client ID
-UPVEST_API_CLIENT_SECRET= # API client secret
-UPVEST_URL= # URL of the Upvest API
+```shell
+source .env
 ```
 
 ## Running the example
@@ -63,7 +75,7 @@ The output on the console should end with
 BUILD SUCCESSFUL in x ms
 ```
 
-The test queries a list of users. You can find the result of the test in `http-signature-examples/Java/simple-signing-demo/build/test-results/test/TEST-co.upvest.client.GetUsersTest.xml`.
+The test queries a list of users. In addition to the output on the console, you can find the result of the test in `http-signature-examples/Java/simple-signing-demo/build/test-results/test/TEST-co.upvest.client.GetUsersTest.xml`.
 
 
 ## Understanding the example

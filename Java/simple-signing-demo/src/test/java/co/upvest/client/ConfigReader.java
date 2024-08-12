@@ -20,10 +20,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-/* A little helper class to reads the properties from the env.properties file */
+/* A little helper class to reads the properties from the environment */
 public class ConfigReader {
 
-    private static final String PROPERTIES_FILE = "env.properties";
     private static final String[] REQUIRED_PROPERTIES = {
             "UPVEST_API_HTTP_SIGN_PRIVATE_KEY_FILE",
             "UPVEST_API_HTTP_SIGN_PRIVATE_KEY_PASSPHRASE",
@@ -36,14 +35,13 @@ public class ConfigReader {
 
     public static Properties readProperties() throws IOException {
         Properties properties = new Properties();
-        try (FileInputStream inputStream = new FileInputStream(PROPERTIES_FILE)) {
-            properties.load(inputStream);
-        }
 
         for (String key : REQUIRED_PROPERTIES) {
-            if (properties.getProperty(key) == null) {
-                throw new IOException("Missing required property: " + key);
+            String value = System.getenv(key);
+            if (value == null) {
+                throw new IOException("Missing required environment variable: " + key);
             }
+            properties.setProperty(key, value);
         }
         return properties;
     }
