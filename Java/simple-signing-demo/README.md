@@ -15,13 +15,6 @@ the Upvest Investment API.
 This example makes the following assumptions:
 
 - You have Java 21 or later installed on your machine.
-- You have [Gradle](https://gradle.com) 8.9 or later installed on your machine.
-
-E.g. on MacOS
-```shell
-brew install openjdk gradle
-```
-
 - You have generated an ECDSA private / public key pair according to
   [our signature tutorial](https://docs.upvest.co/tutorials/implementing_http_signatures_v15#ecdsa).
   (The code example does not support Ed25519 signatures yet.)
