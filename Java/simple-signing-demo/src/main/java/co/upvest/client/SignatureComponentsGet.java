@@ -41,7 +41,7 @@ public class SignatureComponentsGet extends SignatureComponents {
         this.upvestClientId = upvestClientId;
     }
 
-    public SignatureGet sing(SignatureKey key) {
+    public SignatureGet sign(SignatureKey key) {
 
         // It has to be a LinkedHashMap to keep the order of the fields
         var signatureFields = new LinkedHashMap<String, String>();

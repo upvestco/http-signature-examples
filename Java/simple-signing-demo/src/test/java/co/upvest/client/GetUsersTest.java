@@ -101,9 +101,6 @@ public class GetUsersTest {
             logger.debug("response = {}", response);
             logger.debug("response body = {}", response.body());
 
-            // We don't really check the returned data. As long as we get a 200 status code, we are good.
-            assertEquals(200, response.statusCode());
-
             var bodyAsMap = gson.fromJson(response.body(), mapType);
 
             logger.debug("authToken = {}", bodyAsMap.get("access_token"));
@@ -156,7 +153,7 @@ public class GetUsersTest {
                 accessToken,
                 clientId);
 
-        var signedData = authParam.sing(signatureKey);
+        var signedData = authParam.sign(signatureKey);
 
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             var request = HttpRequest.newBuilder()
@@ -179,6 +176,10 @@ public class GetUsersTest {
             }
 
             var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // We don't really check the returned data. As long as we get a 200 status code, we are good.
+            assertEquals(200, response.statusCode());
+
             logger.debug("response = {}", response);
             logger.debug("response body = {}", response.body());
         }
