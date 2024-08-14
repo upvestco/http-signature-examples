@@ -1,6 +1,6 @@
 # Overview
 
-This directory contains a basic example of a making a request to the Upvest Investment API in Java.
+This directory contains a basic example of how to make an authenticated request to the Upvest Investment API, in Java.
 
 The intent of this code is to show you how to implement [version 15 of the
 HTTP Message Signature standard draft](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-message-signatures-15)
