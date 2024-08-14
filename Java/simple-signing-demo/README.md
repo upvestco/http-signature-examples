@@ -17,7 +17,7 @@ This example makes the following assumptions:
 - You have Java 21 or later installed on your machine.
 - You have generated an ECDSA private / public key pair according to
   [our signature tutorial](https://docs.upvest.co/tutorials/implementing_http_signatures_v15#ecdsa).
-  (The code example does not support Ed25519 signatures yet.)
+  (This code example does not support Ed25519 signatures yet.)
 - You have shared the public key with Upvest and have
   received a set of API credentials from Upvest.
 
