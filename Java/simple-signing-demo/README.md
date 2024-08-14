@@ -68,7 +68,7 @@ The output on the console should end with
 BUILD SUCCESSFUL in x ms
 ```
 
-The test queries a list of users. In addition to the output on the console, you can find the result of the test in `http-signature-examples/Java/simple-signing-demo/build/test-results/test/TEST-co.upvest.client.GetUsersTest.xml`.
+The test queries a list of users. In addition to the output on the console, you can find the result of the test in `http-signature-examples/Java/simple-signing-demo/build/test-results/test/TEST-co.upvest.client.UpvestClientTest.xml`.
 
 
 ## Understanding the example
