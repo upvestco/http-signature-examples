@@ -1,0 +1,23 @@
+# Compiled class files etc.
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+replay_pid*
+
+# gradle files
+.gradle
+build/
+
+# Idea files
+.idea
+
+# sensitive information, do not commit
+.env
+

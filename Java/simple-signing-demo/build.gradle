@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+    id "dev.yumi.gradle.licenser" version "1.2.+"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+test {
+    useJUnitPlatform()
+    testLogging.showStandardStreams = true
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(
+            'org.slf4j:slf4j-api:2.0.15',
+            'org.bouncycastle:bcpkix-jdk18on:1.78',
+    )
+    testImplementation(
+            'com.google.code.gson:gson:2.11.0',
+            'org.junit.jupiter:junit-jupiter-api:5.10.3'
+    )
+    testRuntimeOnly(
+            'org.junit.jupiter:junit-jupiter-engine:5.10.3',
+            'org.junit.platform:junit-platform-launcher:1.10.3',
+            'org.slf4j:slf4j-simple:2.0.15'
+    )
+}
+
+
+license {
+    // Add a license header rule, at least one must be present.
+    rule file("codeformat/HEADER")
+
+    // Exclude/include certain file types, defaults are provided to easily deal with Java/Kotlin projects.
+    include "**/*.java" // Include Java files into the file resolution.
+}
