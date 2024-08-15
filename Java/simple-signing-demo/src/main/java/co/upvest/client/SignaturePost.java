@@ -16,21 +16,16 @@
 
 package co.upvest.client;
 
-import java.net.URI;
 import java.util.Objects;
 
-public abstract class SignatureComponents {
-    public final URI url;
-    public final String accept;
-    public final String apiVersion;
+public record SignaturePost(String contentDigest, String signatureParams, String signature) {
+    public SignaturePost {
+        Objects.requireNonNull(contentDigest, "contentDigest cannot be null");
+        Objects.requireNonNull(signatureParams, "signatureParams cannot be null");
+        Objects.requireNonNull(signature, "signature cannot be null");
 
-    public SignatureComponents(URI url, String accept, String apiVersion) {
-        Objects.requireNonNull(url, "url must not be null");
-        Objects.requireNonNull(accept, "accept header must not be null");
-        Objects.requireNonNull(apiVersion, "apiVersion must not be null");
-        this.url = url;
-        this.accept = accept;
-        this.apiVersion = apiVersion;
+        if (contentDigest.isEmpty() || signatureParams.isEmpty() || signature.isEmpty()) {
+            throw new IllegalArgumentException("String arguments cannot be empty");
+        }
     }
-
 }

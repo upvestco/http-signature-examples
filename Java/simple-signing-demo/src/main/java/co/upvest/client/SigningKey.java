@@ -19,8 +19,8 @@ package co.upvest.client;
 import java.security.PrivateKey;
 import java.util.Objects;
 
-public record SignatureKey(PrivateKey key, String keyId) {
-    public SignatureKey {
+public record SigningKey(PrivateKey key, String keyId) {
+    public SigningKey {
         Objects.requireNonNull(key, "Key must not be null");
         Objects.requireNonNull(keyId, "Key ID must not be null");
     }

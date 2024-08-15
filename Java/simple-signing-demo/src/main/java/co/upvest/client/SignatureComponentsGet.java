@@ -17,55 +17,34 @@
 package co.upvest.client;
 
 
-import org.slf4j.Logger;
-
 import java.net.URI;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import java.util.LinkedHashMap;
 import java.util.Objects;
 
-public class SignatureComponentsGet extends SignatureComponents {
+/**
+ * Container for the mandatory components of the signature for GET requests.
+ *
+ * @param url
+ * @param accept
+ * @param apiVersion
+ * @param accessToken
+ * @param upvestClientId
+ */
+public record SignatureComponentsGet(URI url, String accept, String apiVersion, String accessToken,
+                                     String upvestClientId) {
 
-    public final static String httpMethod = "GET";
-    private final static Logger logger = org.slf4j.LoggerFactory.getLogger(SignatureComponentsAuth.class);
-    public final String accessToken;
-    public final String upvestClientId;
+    public SignatureComponentsGet {
+        Objects.requireNonNull(url, "url cannot be null");
+        Objects.requireNonNull(accept, "accept cannot be null");
+        Objects.requireNonNull(apiVersion, "apiVersion cannot be null");
+        Objects.requireNonNull(accessToken, "accessToken cannot be null");
+        Objects.requireNonNull(upvestClientId, "upvestClientId cannot be null");
 
-    public SignatureComponentsGet(URI url, String accept, String apiVersion, String accessToken, String upvestClientId) {
-        super(url, accept, apiVersion);
-        Objects.requireNonNull(accessToken);
-        Objects.requireNonNull(upvestClientId);
-        this.accessToken = accessToken;
-        this.upvestClientId = upvestClientId;
-    }
-
-    public SignatureGet sign(SignatureKey key) {
-
-        // It has to be a LinkedHashMap to keep the order of the fields
-        var signatureFields = new LinkedHashMap<String, String>();
-        signatureFields.put("\"upvest-client-id\"", upvestClientId);
-        signatureFields.put("\"authorization\"", "Bearer " + accessToken);
-        signatureFields.put("\"upvest-api-version\"", apiVersion);
-        signatureFields.put("\"accept\"", accept);
-        signatureFields.put("\"@method\"", SignatureComponentsGet.httpMethod);
-        signatureFields.put("\"@path\"", url.getPath());
-        signatureFields.put("\"@query\"", "?" + url.getRawQuery());
-
-        var signatureParams = SigningUtil.createSignatureParametersString(signatureFields, key);
-        signatureFields.put("\"@signature-params\"", signatureParams);
-        try {
-            var signature = SigningUtil.sign(signatureFields, key);
-            logger.debug("Signature: {}", signature);
-            return new SignatureGet(signatureParams, signature);
-
-        } catch (NoSuchAlgorithmException | InvalidKeyException | SignatureException ex) {
-            logger.error(ex.getMessage(), ex);
-            throw new RuntimeException(ex);
+        if (accept.isEmpty() || apiVersion.isEmpty() || accessToken.isEmpty() || upvestClientId.isEmpty()) {
+            throw new IllegalArgumentException("String arguments cannot be empty");
         }
     }
 
-    public record SignatureGet(String signatureParams, String signature) {
+    public String httpMethod() {
+        return "GET";
     }
 }

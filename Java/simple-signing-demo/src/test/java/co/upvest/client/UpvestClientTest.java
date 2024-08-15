@@ -41,7 +41,7 @@ public class UpvestClientTest {
     private static final String UPVEST_SIGNATURE_VERSION = "15";
     private static final String SIGNATURE_ID = "sig1";
     private final Logger logger = org.slf4j.LoggerFactory.getLogger(UpvestClientTest.class);
-    private SignatureKey signatureKey;
+    private SigningKey signatureKey;
 
     private String serverUrl;
     private String clientId;
@@ -72,20 +72,20 @@ public class UpvestClientTest {
                 authRequestBody,
                 "application/x-www-form-urlencoded");
 
-        var signedData = signatureComponents.sign(signatureKey);
+        var signedData = SigningUtility.signAuthRequest(signatureKey, signatureComponents);
 
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
 
             var request = HttpRequest.newBuilder()
-                    .uri(signatureComponents.url)
+                    .uri(signatureComponents.url())
                     .version(HttpClient.Version.HTTP_1_1)
                     .header("Signature-Input", SIGNATURE_ID + "=" + signedData.signatureParams())
                     .header("Signature", SIGNATURE_ID + "=:" + signedData.signature() + ":")
-                    .header("Content-Type", signatureComponents.contentType)
-                    .header("Accept", signatureComponents.accept)
+                    .header("Content-Type", signatureComponents.contentType())
+                    .header("Accept", signatureComponents.accept())
                     .header("Upvest-Signature-Version", UPVEST_SIGNATURE_VERSION)
                     .header("Content-Digest", signedData.contentDigest())
-                    .POST(HttpRequest.BodyPublishers.ofString(signatureComponents.bodyContent))
+                    .POST(HttpRequest.BodyPublishers.ofString(signatureComponents.bodyContent()))
                     .build();
 
             var mapType = new TypeToken<Map<String, String>>() {
@@ -118,7 +118,7 @@ public class UpvestClientTest {
         authRequestFormFields.put("scope", clientScope);
         authRequestFormFields.put("client_id", clientId);
         authRequestFormFields.put("client_secret", clientSecret);
-        return SigningUtil.getFormDataAsString(authRequestFormFields);
+        return SigningUtility.getFormDataAsString(authRequestFormFields);
     }
 
 
@@ -126,7 +126,7 @@ public class UpvestClientTest {
         try {
             var properties = ConfigReader.readProperties();
 
-            signatureKey = SigningUtil.getSignatureKey(
+            signatureKey = KeyUtility.getSignatureKey(
                     properties.getProperty("UPVEST_API_HTTP_SIGN_PRIVATE_KEY_FILE"),
                     properties.getProperty("UPVEST_API_HTTP_SIGN_PRIVATE_KEY_PASSPHRASE"),
                     properties.getProperty("UPVEST_API_KEY_ID"));
@@ -153,19 +153,19 @@ public class UpvestClientTest {
                 accessToken,
                 clientId);
 
-        var signedData = getRequestComponents.sign(signatureKey);
+        var signedData = SigningUtility.signGetRequest(signatureKey, getRequestComponents);
 
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
             var request = HttpRequest.newBuilder()
-                    .uri(getRequestComponents.url)
+                    .uri(getRequestComponents.url())
                     .version(HttpClient.Version.HTTP_1_1)
                     .header("Signature-Input", SIGNATURE_ID + "=" + signedData.signatureParams())
-                    .header("Authorization", "Bearer " + getRequestComponents.accessToken)
+                    .header("Authorization", "Bearer " + getRequestComponents.accessToken())
                     .header("Signature", SIGNATURE_ID + "=:" + signedData.signature() + ":")
-                    .header("Accept", getRequestComponents.accept)
+                    .header("Accept", getRequestComponents.accept())
                     .header("Upvest-Signature-Version", UPVEST_SIGNATURE_VERSION)
                     .header("Upvest-Api-Version", UPVEST_API_VERSION)
-                    .header("Upvest-Client-Id", getRequestComponents.upvestClientId)
+                    .header("Upvest-Client-Id", getRequestComponents.upvestClientId())
                     .GET()
                     .build();
 
@@ -200,24 +200,24 @@ public class UpvestClientTest {
                 createUserBody,
                 "application/json");
 
-        var signedData = postRequestComponents.sign(signatureKey);
+        var signedData = SigningUtility.signPostRequest(signatureKey, postRequestComponents);
 
         try (HttpClient httpClient = HttpClient.newHttpClient()) {
 
             var request = HttpRequest.newBuilder()
-                    .uri(postRequestComponents.url)
+                    .uri(postRequestComponents.url())
                     .version(HttpClient.Version.HTTP_1_1)
                     .header("Signature-Input", SIGNATURE_ID + "=" + signedData.signatureParams())
-                    .header("Authorization", "Bearer " + postRequestComponents.accessToken)
+                    .header("Authorization", "Bearer " + postRequestComponents.accessToken())
                     .header("Signature", SIGNATURE_ID + "=:" + signedData.signature() + ":")
-                    .header("Content-Type", postRequestComponents.contentType)
-                    .header("Accept", postRequestComponents.accept)
+                    .header("Content-Type", postRequestComponents.contentType())
+                    .header("Accept", postRequestComponents.accept())
                     .header("Upvest-Api-Version", UPVEST_API_VERSION)
-                    .header("Upvest-Client-Id", postRequestComponents.upvestClientId)
+                    .header("Upvest-Client-Id", postRequestComponents.upvestClientId())
                     .header("Upvest-Signature-Version", UPVEST_SIGNATURE_VERSION)
                     .header("Content-Digest", signedData.contentDigest())
                     .header("Idempotency-Key", idempotencyKey.toString())
-                    .POST(HttpRequest.BodyPublishers.ofString(postRequestComponents.bodyContent))
+                    .POST(HttpRequest.BodyPublishers.ofString(postRequestComponents.bodyContent()))
                     .build();
 
             var mapType = new TypeToken<Map<String, String>>() {
