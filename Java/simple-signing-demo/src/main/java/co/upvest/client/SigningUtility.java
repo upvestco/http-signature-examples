@@ -119,6 +119,18 @@ public final class SigningUtility {
     }
 
     /**
+     * Returns the number of UTF-8 bytes in the given string, which is the value that must
+     * be used for the signed {@code content-length} component (RFC 9110 §8.6 defines
+     * Content-Length as a count of octets, not characters). Java's {@code String.length()}
+     * returns UTF-16 code units, which diverges from the byte count for any non-ASCII
+     * character (e.g. {@code ø} = 1 char / 2 bytes, {@code '} U+2019 = 1 char / 3 bytes),
+     * causing signature verification failures on the server side.
+     */
+    private static String contentLength(String body) {
+        return String.valueOf(body.getBytes(StandardCharsets.UTF_8).length);
+    }
+
+    /**
      * Creates the signature parameters string.
      *
      * @param signatureFields the fields to sign
@@ -169,7 +181,7 @@ public final class SigningUtility {
             signatureFields.put("\"authorization\"", "Bearer " + signatureComponents.accessToken());
             signatureFields.put("\"upvest-api-version\"", signatureComponents.apiVersion());
             signatureFields.put("\"content-type\"", signatureComponents.contentType());
-            signatureFields.put("\"content-length\"", String.valueOf(signatureComponents.bodyContent().length()));
+            signatureFields.put("\"content-length\"", contentLength(signatureComponents.bodyContent()));
             signatureFields.put("\"accept\"", signatureComponents.accept());
             signatureFields.put("\"@method\"", signatureComponents.httpMethod());
             signatureFields.put("\"@path\"", signatureComponents.url().getPath());
@@ -234,7 +246,7 @@ public final class SigningUtility {
             // It has to be a LinkedHashMap to keep the order of the fields
             var signatureFields = new LinkedHashMap<String, String>();
             signatureFields.put("\"content-type\"", signatureComponents.contentType());
-            signatureFields.put("\"content-length\"", String.valueOf(signatureComponents.bodyContent().length()));
+            signatureFields.put("\"content-length\"", contentLength(signatureComponents.bodyContent()));
             signatureFields.put("\"accept\"", signatureComponents.accept());
             signatureFields.put("\"@method\"", signatureComponents.httpMethod());
             signatureFields.put("\"@path\"", signatureComponents.url().getPath());
